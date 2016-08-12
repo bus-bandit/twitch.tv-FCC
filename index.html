@@ -31,11 +31,41 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
 
+    <div id=streamsList>
+        streams go here.
+    </div>
+
 </body>
 
 <script>
-    //Listeners to check if user hit "Enter" or clicked "Search".
+    var streamArr = ['freecodecamp', 'videogamedunkey', 'comster404']
 
+    function parseJSON(stream, json) {
+        if (json == 'status code 422') {
+            console.log('there was an error');
+            console.log('stream ' + stream + ' doesn\'t exist')
+        }
+        else {
+            console.log(json);
+            console.log(stream);
+            var element = json['_links']['channel'];
+            console.log(element);
+        }
+    }
+
+    $(document).ready(function() {
+        for (i = 0; i < streamArr.length; i++) {
+            $.stream = streamArr[i];
+            $.getJSON('https://api.twitch.tv/kraken/streams/' + streamArr[i])
+                .done(function(json) {
+                    parseJSON($.stream, json);
+                })
+                .fail(function(jqxhr, textStatus, error) {
+                    console.log(error);
+                    parseJSON($.stream, error);
+                });
+        }
+    });
 </script>
 
 </html>
