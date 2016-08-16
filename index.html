@@ -31,8 +31,11 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
 
-    <div id=streamsList>
-        streams go here.
+    <div class = "row" id = "streamsList">
+      <div class = "col-xs-4" id = "streamNames">
+      </div>
+      <div class = "col-xs-4" id = "streamStatus">
+      </div>
     </div>
 
 </body>
@@ -45,11 +48,26 @@
     var onlineInfo = [];
     var count = 0;
 
+    function makeList() {
+      for(i = 0; i < onlineStreams.length; i++) {
+        $('#streamNames').append('<p>' + onlineStreams[i] + '</p>');
+        $('#streamStatus').append('<p>' + onlineInfo[i] + '</p>');
+      }
+      for(i = 0; i < offlineStreams.length; i++) {
+        $('#streamNames').append('<p>' + offlineStreams[i] + '</p>');
+        $('#streamStatus').append('<p>' + offlineInfo[i] + '</p>');
+      }
+
+    }
+
     function checkCount() {
       count++;
       if (count == streamArr.length) {
         console.log(offlineStreams);
+        console.log(offlineInfo);
         console.log(onlineStreams);
+        console.log(onlineInfo);
+        makeList();
       }
       else {
         return;
