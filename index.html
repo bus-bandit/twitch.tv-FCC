@@ -38,33 +38,83 @@
 </body>
 
 <script>
-    var streamArr = ['freecodecamp', 'videogamedunkey', 'comster404']
+    var streamArr = ['bus_bandit', 'freecodecamp', 'videogamedunkey', 'brunofin', 'comster404', 'ESL_SC2', 'OgamingSC2', 'cretetion', 'storbeck', 'habathcx', 'RobotCaleb', 'noobs2ninjas']
+    var offlineStreams = [];
+    var offlineInfo = [];
+    var onlineStreams = [];
+    var onlineInfo = [];
+    var count = 0;
 
-    function parseJSON(stream, json) {
-        if (json == 'status code 422') {
-            console.log('there was an error');
-            console.log('stream ' + stream + ' doesn\'t exist')
+    function checkCount() {
+      count++;
+      if (count == streamArr.length) {
+        console.log(offlineStreams);
+        console.log(onlineStreams);
+      }
+      else {
+        return;
+      }
+    }
+
+    function parseJSON(json, stream) {
+        if (json['status']) {
+            if (json['status'] == 422) {
+                console.log('Account ' + stream + ' has been closed');
+                offlineStreams.push(stream);
+                //console.log(offlineStreams);
+                offlineInfo.push('Account closed.');
+                checkCount();
+            }
+            else if (json['status'] == 404) {
+                console.log('Account ' + stream + ' doesn\'t exist');
+                offlineStreams.push(stream);
+                offlineInfo.push('Account doesn\'t exist.');
+                checkCount();
+            }
         }
         else {
             console.log(json);
             console.log(stream);
             var element = json['_links']['channel'];
+            onlineStreams.push(stream);
+            onlineInfo.push(element);
             console.log(element);
+            checkCount();
         }
     }
 
     $(document).ready(function() {
+        //count = 0; //declare count as Global
         for (i = 0; i < streamArr.length; i++) {
-            $.stream = streamArr[i];
-            $.getJSON('https://api.twitch.tv/kraken/streams/' + streamArr[i])
+          (function(i) {
+            $.getJSON('https://api.twitch.tv/kraken/streams/' + streamArr[i] + '?callback=?')
                 .done(function(json) {
-                    parseJSON($.stream, json);
+                    parseJSON(json, streamArr[i]);
+                })
+                .fail(function(jqxhr, testStatus, error) {
+                    console.log(error);
+                    parseJSON(error, streamArr[i]);
+                });
+            /*if (count >= streamArr.length) {
+                populate();
+            }*/
+          })(i);
+          //console.log(offlineStreams);
+          //console.log(onlineStreams);
+        }
+
+        /*console.log(count);
+          $.each($.streamArr, function(index, stream) {
+            $.getJSON('https://api.twitch.tv/kraken/streams/' + stream + '?callback=?')
+                .done(function(json) {
+                    parseJSON(json, stream);
                 })
                 .fail(function(jqxhr, textStatus, error) {
                     console.log(error);
-                    parseJSON($.stream, error);
+                    parseJSON(error);
                 });
-        }
+//        }
+          });*/
     });
 </script>
 
